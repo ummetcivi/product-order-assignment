@@ -1,0 +1,336 @@
+openapi: 3.0.1
+info:
+  title: Product Order Assignment
+  version: v0
+servers:
+  - url: 'http://baseUrl'
+    description: Generated server url
+paths:
+  /api/v1/products:
+    get:
+      tags:
+        - product-controller
+      operationId: getAll
+      parameters:
+        - name: page
+          in: query
+          description: Zero-based page index (0..N)
+          required: false
+          schema:
+            minimum: 0
+            type: integer
+            default: 0
+        - name: size
+          in: query
+          description: The size of the page to be returned
+          required: false
+          schema:
+            minimum: 1
+            type: integer
+            default: 20
+        - name: sort
+          in: query
+          description: 'Sorting criteria in the format: property(,asc|desc). Default sort order is ascending. Multiple sort criteria are supported.'
+          required: false
+          schema:
+            type: array
+            items:
+              type: string
+      responses:
+        '200':
+          description: OK
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/PageProductResource'
+    post:
+      tags:
+        - product-controller
+      operationId: create
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateProductDto'
+        required: true
+      responses:
+        '200':
+          description: OK
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/ProductResource'
+  /api/v1/orders:
+    get:
+      tags:
+        - order-controller
+      operationId: getAll_1
+      parameters:
+        - name: startDate
+          in: query
+          required: false
+          schema:
+            type: string
+            format: date-time
+        - name: endDate
+          in: query
+          required: false
+          schema:
+            type: string
+            format: date-time
+        - name: page
+          in: query
+          description: Zero-based page index (0..N)
+          required: false
+          schema:
+            minimum: 0
+            type: integer
+            default: 0
+        - name: size
+          in: query
+          description: The size of the page to be returned
+          required: false
+          schema:
+            minimum: 1
+            type: integer
+            default: 20
+        - name: sort
+          in: query
+          description: 'Sorting criteria in the format: property(,asc|desc). Default sort order is ascending. Multiple sort criteria are supported.'
+          required: false
+          schema:
+            type: array
+            items:
+              type: string
+      responses:
+        '200':
+          description: OK
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/PageOrderResource'
+    post:
+      tags:
+        - order-controller
+      operationId: create_1
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateOrderDto'
+        required: true
+      responses:
+        '200':
+          description: OK
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/OrderResource'
+  '/api/v1/products/{id}':
+    put:
+      tags:
+        - product-controller
+      operationId: update
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UpdateProductDto'
+        required: true
+      responses:
+        '200':
+          description: OK
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/ProductResource'
+components:
+  schemas:
+    UpdateProductDto:
+      required:
+        - name
+      type: object
+      properties:
+        name:
+          type: string
+        price:
+          type: number
+          format: double
+          example: 2.5
+    ProductResource:
+      type: object
+      properties:
+        id:
+          type: string
+        name:
+          type: string
+        price:
+          type: number
+          format: double
+          example: 2.5
+        createdAt:
+          type: string
+          format: date-time
+    CreateProductDto:
+      required:
+        - name
+      type: object
+      properties:
+        name:
+          type: string
+        price:
+          type: number
+          format: double
+          example: 2.5
+    CreateOrderDto:
+      required:
+        - buyerEmail
+        - products
+      type: object
+      properties:
+        buyerEmail:
+          type: string
+          example: test@test.com
+        products:
+          type: array
+          items:
+            $ref: '#/components/schemas/CreateOrderProductDto'
+    CreateOrderProductDto:
+      required:
+        - id
+      type: object
+      properties:
+        id:
+          type: string
+        quantity:
+          minimum: 1
+          type: integer
+          format: int32
+    OrderProductResource:
+      type: object
+      properties:
+        id:
+          type: string
+        name:
+          type: string
+        quantity:
+          minimum: 1
+          type: integer
+          format: int32
+        price:
+          example: 2.5
+          type: number
+          format: double
+    OrderResource:
+      type: object
+      properties:
+        id:
+          type: string
+        buyerEmail:
+          type: string
+          example: test@test.com
+        products:
+          type: array
+          items:
+            $ref: '#/components/schemas/OrderProductResource'
+        createdAt:
+          type: string
+          format: date-time
+        totalPrice:
+          type: number
+          format: double
+          example: 10
+    PageProductResource:
+      type: object
+      properties:
+        totalElements:
+          type: integer
+          format: int64
+        totalPages:
+          type: integer
+          format: int32
+        size:
+          type: integer
+          format: int32
+        content:
+          type: array
+          items:
+            $ref: '#/components/schemas/ProductResource'
+        sort:
+          $ref: '#/components/schemas/Sort'
+        first:
+          type: boolean
+        last:
+          type: boolean
+        numberOfElements:
+          type: integer
+          format: int32
+        pageable:
+          $ref: '#/components/schemas/Pageable'
+        number:
+          type: integer
+          format: int32
+        empty:
+          type: boolean
+    Pageable:
+      type: object
+      properties:
+        page:
+          minimum: 0
+          type: integer
+          format: int32
+        size:
+          minimum: 1
+          type: integer
+          format: int32
+        sort:
+          type: array
+          items:
+            type: string
+    Sort:
+      type: object
+      properties:
+        sorted:
+          type: boolean
+        unsorted:
+          type: boolean
+        empty:
+          type: boolean
+    PageOrderResource:
+      type: object
+      properties:
+        totalElements:
+          type: integer
+          format: int64
+        totalPages:
+          type: integer
+          format: int32
+        size:
+          type: integer
+          format: int32
+        content:
+          type: array
+          items:
+            $ref: '#/components/schemas/OrderResource'
+        sort:
+          $ref: '#/components/schemas/Sort'
+        first:
+          type: boolean
+        last:
+          type: boolean
+        numberOfElements:
+          type: integer
+          format: int32
+        pageable:
+          $ref: '#/components/schemas/Pageable'
+        number:
+          type: integer
+          format: int32
+        empty:
+          type: boolean

@@ -1,0 +1,24 @@
+version: "3.9"
+
+services:
+  database:
+    restart: unless-stopped
+    image: mongo:latest
+    environment:
+      - MONGO_INITDB_ROOT_USERNAME=root
+      - MONGO_INITDB_ROOT_PASSWORD=rootpass
+      - MONGO_INITDB_DATABASE=service_db
+    ports:
+      - 27017:27017
+
+  service:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    restart: unless-stopped
+    ports:
+      - 8080:8080
+    depends_on:
+      - database
+    environment:
+      - spring.data.mongodb.uri=mongodb://root:rootpass@database:27017/test?authSource=admin
