@@ -33,9 +33,8 @@ OpenAPI 3.0 Spec
 
 You can find the OpenAPI 3.0 spec under api folder.
 
-Answers
----
+## Answers
 
-- We can introduce OAuth2 security by adding just a few libraries and configuration classes.
+- We can introduce OAuth2 security (with JWT tokens) by adding just a few libraries and configuration classes.
 - Not sure what is meant by `redundant` but we can split this service into two microservices, ProductService and
   OrderService. Splitting won't be too hard since domains are splitted.
