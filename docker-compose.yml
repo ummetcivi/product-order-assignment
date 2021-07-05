@@ -21,4 +21,4 @@ services:
     depends_on:
       - database
     environment:
-      - spring.data.mongodb.uri=mongodb://root:rootpass@database:27017/test?authSource=admin
+      - spring.data.mongodb.uri=mongodb://root:rootpass@database:27017/service_db?authSource=admin
